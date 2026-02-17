@@ -1377,12 +1377,30 @@ class HuckleberryAPI:
                     continue  # Skip multi-entry docs from this query
 
                 # Regular doc: durations are in minutes
-                events.append({
+                event = {
                     "start": data["start"],
                     "leftDuration": data.get("leftDuration", 0),
                     "rightDuration": data.get("rightDuration", 0),
                     "is_multi_entry": False,
-                })
+                }
+
+                # Preserve mode-specific fields for consumers (e.g., calendar)
+                if "mode" in data:
+                    event["mode"] = data.get("mode")
+                if "type" in data:
+                    event["type"] = data.get("type")
+                if "bottleType" in data:
+                    event["bottleType"] = data.get("bottleType")
+                if "amount" in data:
+                    event["amount"] = data.get("amount")
+                if "units" in data:
+                    event["units"] = data.get("units")
+                if "bottleAmount" in data:
+                    event["bottleAmount"] = data.get("bottleAmount")
+                if "bottleUnits" in data:
+                    event["bottleUnits"] = data.get("bottleUnits")
+
+                events.append(event)
 
             # Query 2: Get multi-entry documents (can't filter by nested start field)
             multi_docs = intervals_ref.where(
@@ -1404,12 +1422,30 @@ class HuckleberryAPI:
                         continue
 
                     # Multi-entry: durations are in SECONDS
-                    events.append({
+                    event = {
                         "start": entry_start,
                         "leftDuration": entry.get("leftDuration", 0),
                         "rightDuration": entry.get("rightDuration", 0),
                         "is_multi_entry": True,
-                    })
+                    }
+
+                    # Preserve mode-specific fields for consumers (e.g., calendar)
+                    if "mode" in entry:
+                        event["mode"] = entry.get("mode")
+                    if "type" in entry:
+                        event["type"] = entry.get("type")
+                    if "bottleType" in entry:
+                        event["bottleType"] = entry.get("bottleType")
+                    if "amount" in entry:
+                        event["amount"] = entry.get("amount")
+                    if "units" in entry:
+                        event["units"] = entry.get("units")
+                    if "bottleAmount" in entry:
+                        event["bottleAmount"] = entry.get("bottleAmount")
+                    if "bottleUnits" in entry:
+                        event["bottleUnits"] = entry.get("bottleUnits")
+
+                    events.append(event)
 
         except Exception as err:
             _LOGGER.error("Error fetching feed intervals: %s", err)

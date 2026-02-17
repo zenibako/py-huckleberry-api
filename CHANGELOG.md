@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.19] - 2026-02-17
+
 ### Added
 - **NEW API METHOD**: `log_bottle_feeding()` for logging bottle feedings as instant events
   - Supports bottle types: "Breast Milk", "Formula", "Mixed"
@@ -21,6 +23,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Refactored `FeedIntervalData` into union type (`BreastFeedIntervalData | BottleFeedIntervalData | SolidsFeedIntervalData`)
 - **TESTS**: 6 new integration tests for bottle feeding functionality
 - **DOCUMENTATION**: Updated DATA_STRUCTURE.md with bottle feeding interval examples
+
+### Fixed
+- **CALENDAR COMPATIBILITY**: `get_feed_intervals()` now preserves bottle metadata fields
+  - Passes through `mode`, `type`, `bottleType`, `amount`, `units`, `bottleAmount`, `bottleUnits`
+  - Prevents bottle entries from being misclassified downstream as zero-duration breastfeeding events
 
 ## [0.1.17] - 2025-12-16
 
