@@ -85,6 +85,8 @@ The skill is now the canonical workflow for:
 - **Never** add guessed, inferred, placeholder, or convenience values.
 - If a value cannot be validated as factual and true in app evidence, do not add it.
 
+For Python commands in this repository (including running tests), always use the `uv` CLI (for example: `uv run pytest ...`) instead of invoking tools directly.
+
 **Important Notes**:
 - **Version 0.9.258 is the last version with readable (unobfuscated) source code**
 - Versions 0.9.280+ have obfuscated sources (class names like `a.b.c`)
@@ -692,6 +694,8 @@ except Exception as err:
 ```
 
 ## Testing Strategy
+
+**Command rule**: Use `uv` for test execution commands (for example: `uv run pytest`).
 
 ### Integration Tests
 
