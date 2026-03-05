@@ -11,7 +11,6 @@ from collections.abc import AsyncIterator
 from typing import Any
 from urllib.parse import quote
 
-import httpx
 import pytest
 from google.api_core.exceptions import FailedPrecondition
 from google.cloud import firestore
@@ -303,10 +302,9 @@ async def test_live_latest_health_pump_activities_and_foods(api: HuckleberryAPI)
 
     encoded_object = quote(CURATED_FOODS_OBJECT, safe="")
     url = f"https://firebasestorage.googleapis.com/v0/b/{CURATED_FOODS_BUCKET}/o/{encoded_object}?alt=media"
-    async with httpx.AsyncClient(timeout=30) as client:
-        response = await client.get(url, headers={"Authorization": f"Bearer {api.id_token}"})
+    async with api.websession.get(url, headers={"Authorization": f"Bearer {api.id_token}"}, timeout=30) as response:
         response.raise_for_status()
-        payload = response.json()
+        payload = await response.json()
 
     assert isinstance(payload, dict)
     for food_id, raw_food in payload.items():

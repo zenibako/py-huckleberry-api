@@ -8,6 +8,7 @@ Integration tests require valid Huckleberry account credentials set as environme
 
 - `HUCKLEBERRY_EMAIL`: Your Huckleberry account email
 - `HUCKLEBERRY_PASSWORD`: Your Huckleberry account password
+- `HUCKLEBERRY_TIMEZONE`: IANA timezone (for example `UTC` or `Europe/London`)
 
 ## Running Tests Locally
 
@@ -21,10 +22,12 @@ uv sync --dev
 # PowerShell
 $env:HUCKLEBERRY_EMAIL = "your-email@example.com"
 $env:HUCKLEBERRY_PASSWORD = "your-password"
+$env:HUCKLEBERRY_TIMEZONE = "UTC"
 
 # Bash/Linux
 export HUCKLEBERRY_EMAIL="your-email@example.com"
 export HUCKLEBERRY_PASSWORD="your-password"
+export HUCKLEBERRY_TIMEZONE="UTC"
 ```
 
 3. Run tests:

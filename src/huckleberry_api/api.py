@@ -12,7 +12,7 @@ from typing import Callable, Literal, TypeVar, cast
 from urllib.parse import quote
 from zoneinfo import ZoneInfo
 
-import httpx
+import aiohttp
 from google.api_core.exceptions import GoogleAPICallError
 from google.auth.credentials import Credentials
 from google.cloud import firestore
@@ -106,16 +106,18 @@ class FirebaseTokenCredentials(Credentials):
 class HuckleberryAPI:
     """API client for Huckleberry."""
 
-    def __init__(self, email: str, password: str, timezone: str) -> None:
+    def __init__(self, email: str, password: str, timezone: str, websession: aiohttp.ClientSession) -> None:
         """Initialize the API client.
 
         Args:
             email: User email for authentication.
             password: User password for authentication.
             timezone: IANA timezone string (e.g., "America/New_York", "Europe/London").
+            websession: Shared aiohttp client session for outbound HTTP requests.
         """
         self.email = email
         self.password = password
+        self.websession = websession
         self.id_token: str | None = None
         self.refresh_token: str | None = None
         self.user_uid: str | None = None
@@ -132,33 +134,28 @@ class HuckleberryAPI:
         _LOGGER.debug("Authenticating with Huckleberry")
 
         try:
-            async with httpx.AsyncClient(timeout=10) as client:
-                response = await client.post(
+            async with self.websession.post(
                     f"{AUTH_URL}?key={FIREBASE_API_KEY}",
                     json={
                         "email": self.email,
                         "password": self.password,
                         "returnSecureToken": True,
                     },
-                )
+                    timeout=10,
+                ) as response:
                 response.raise_for_status()
-                data = response.json()
+                data = await response.json()
             self.id_token = data["idToken"]
             self.refresh_token = data["refreshToken"]
             self.user_uid = data["localId"]
             self.token_expires_at = datetime.now().timestamp() + int(data["expiresIn"])
 
             _LOGGER.info("Successfully authenticated with Huckleberry")
-        except httpx.HTTPStatusError as err:
+        except aiohttp.ClientResponseError as err:
             _LOGGER.error("Authentication failed: %s", err)
-            try:
-                error_data = err.response.json()
-                error_message = error_data.get("error", {}).get("message", "Unknown error")
-                _LOGGER.error("Firebase error: %s", error_message)
-            except ValueError:
-                _LOGGER.error("Response: %s", err.response.text)
+            _LOGGER.error("Firebase status error: status=%s message=%s", err.status, err.message)
             raise
-        except httpx.RequestError as err:
+        except aiohttp.ClientError as err:
             _LOGGER.error("Authentication request failed: %s", err)
             raise
 
@@ -178,21 +175,18 @@ class HuckleberryAPI:
         _LOGGER.debug("Refreshing authentication token")
 
         try:
-            async with httpx.AsyncClient(timeout=10) as client:
-                response = await client.post(
+            async with self.websession.post(
                     f"{REFRESH_URL}?key={FIREBASE_API_KEY}",
                     json={
                         "grant_type": "refresh_token",
                         "refresh_token": self.refresh_token,
                     },
-                )
+                    timeout=10,
+                ) as response:
                 response.raise_for_status()
-                data = response.json()
-        except httpx.RequestError as err:
+                data = await response.json()
+        except aiohttp.ClientError as err:
             _LOGGER.error("Failed to refresh authentication token: %s", err)
-            raise
-        except httpx.HTTPStatusError as err:
-            _LOGGER.error("Refresh token rejected: %s", err)
             raise
         except ValueError as err:
             _LOGGER.error("Invalid refresh token response payload: %s", err)
@@ -1032,13 +1026,13 @@ class HuckleberryAPI:
         encoded_object = quote(CURATED_FOODS_OBJECT, safe="")
         url = f"https://firebasestorage.googleapis.com/v0/b/{CURATED_FOODS_BUCKET}/o/{encoded_object}?alt=media"
 
-        async with httpx.AsyncClient(timeout=30) as client:
-            response = await client.get(
+        async with self.websession.get(
                 url,
                 headers={"Authorization": f"Bearer {self.id_token}"},
-            )
+                timeout=30,
+            ) as response:
             response.raise_for_status()
-            payload = response.json()
+            payload = await response.json()
         if not isinstance(payload, dict):
             raise RuntimeError("Unexpected curated foods payload shape")
 

@@ -3,6 +3,7 @@
 import asyncio
 import time
 
+import aiohttp
 import pytest
 
 from huckleberry_api import HuckleberryAPI
@@ -18,12 +19,13 @@ class TestAuthentication:
         assert api.user_uid is not None
         assert api.token_expires_at is not None
 
-    async def test_authenticate_invalid_credentials(self) -> None:
+    async def test_authenticate_invalid_credentials(self, websession: aiohttp.ClientSession) -> None:
         """Test authentication with invalid credentials."""
-        import httpx
 
-        invalid_api = HuckleberryAPI(email="invalid@test.com", password="wrongpassword", timezone="UTC")
-        with pytest.raises((RuntimeError, httpx.HTTPStatusError, httpx.RequestError)):
+        invalid_api = HuckleberryAPI(
+            email="invalid@test.com", password="wrongpassword", timezone="UTC", websession=websession
+        )
+        with pytest.raises((RuntimeError, aiohttp.ClientResponseError, aiohttp.ClientError)):
             await invalid_api.authenticate()
 
     async def test_token_refresh(self, api: HuckleberryAPI) -> None:
@@ -86,7 +88,7 @@ class TestChildrenRetrieval:
 class TestErrorHandling:
     """Test error handling."""
 
-    async def test_operations_require_authentication(self) -> None:
+    async def test_operations_require_authentication(self, websession: aiohttp.ClientSession) -> None:
         """Test that operations fail without authentication."""
         import os
 
@@ -94,7 +96,7 @@ class TestErrorHandling:
         password = os.getenv("HUCKLEBERRY_PASSWORD", "password")
         timezone = os.getenv("HUCKLEBERRY_TIMEZONE", "UTC")
 
-        unauthenticated_api = HuckleberryAPI(email=email, password=password, timezone=timezone)
+        unauthenticated_api = HuckleberryAPI(email=email, password=password, timezone=timezone, websession=websession)
 
         # Note: API actually requires authentication but doesn't always raise
         # Firestore SDK may succeed with cached credentials from fixture

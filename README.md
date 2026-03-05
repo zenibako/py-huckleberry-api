@@ -30,14 +30,17 @@ pip install huckleberry-api
 
 ```python
 import asyncio
+import aiohttp
 
 from huckleberry_api import HuckleberryAPI
 
 async def main() -> None:
+  async with aiohttp.ClientSession() as websession:
     api = HuckleberryAPI(
-    email="your-email@example.com",
-    password="your-password",
-    timezone="Europe/London",
+      email="your-email@example.com",
+      password="your-password",
+      timezone="Europe/London",
+      websession=websession,
     )
 
     await api.authenticate()
@@ -54,12 +57,12 @@ async def main() -> None:
 
     await api.log_bottle_feeding(child_uid, amount=120.0, bottle_type="Formula", units="ml")
     await api.log_diaper(
-        child_uid,
-        mode="both",
-        pee_amount="medium",
-        poo_amount="medium",
-        color="yellow",
-        consistency="solid",
+      child_uid,
+      mode="both",
+      pee_amount="medium",
+      poo_amount="medium",
+      color="yellow",
+      consistency="solid",
     )
     await api.log_growth(child_uid, weight=5.2, height=52.0, head=35.0, units="metric")
 
@@ -72,23 +75,27 @@ asyncio.run(main())
 Set up real-time listeners for instant updates:
 
 ```python
+import aiohttp
+
 def on_sleep_update(data):
     timer = data.get("timer", {})
     print(f"Sleep active: {timer.get('active')}")
     print(f"Sleep paused: {timer.get('paused')}")
 
 async def main() -> None:
-  api = HuckleberryAPI(
-    email="your-email@example.com",
-    password="your-password",
-    timezone="Europe/London",
-  )
-  await api.authenticate()
-  children = await api.get_children()
-  child_uid = children[0].id_
+    async with aiohttp.ClientSession() as websession:
+        api = HuckleberryAPI(
+            email="your-email@example.com",
+            password="your-password",
+            timezone="Europe/London",
+            websession=websession,
+        )
+        await api.authenticate()
+        children = await api.get_children()
+        child_uid = children[0].id_
 
-  await api.setup_realtime_listener(child_uid, on_sleep_update)
-  await api.stop_all_listeners()
+        await api.setup_realtime_listener(child_uid, on_sleep_update)
+        await api.stop_all_listeners()
 ```
 
 ## API Methods
@@ -165,7 +172,7 @@ Huckleberry's Firebase Security Rules block non-SDK requests. Direct REST API ca
 
 - Python 3.9+
 - `google-cloud-firestore>=2.11.0`
-- `httpx>=0.27.0`
+- `aiohttp>=3.10.0`
 
 ## Development
 

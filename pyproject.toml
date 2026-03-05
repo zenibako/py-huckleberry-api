@@ -11,7 +11,7 @@ requires-python = ">=3.9"
 dependencies = [
     "google-cloud-firestore>=2.11.0",
     "pydantic>=2.10.0",
-    "httpx>=0.27.0",
+    "aiohttp>=3.10.0",
     "tzdata>=2024.1",
 ]
 keywords = ["huckleberry", "baby", "tracking", "firebase", "api"]
