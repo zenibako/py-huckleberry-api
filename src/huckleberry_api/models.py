@@ -6,10 +6,6 @@ Return models are defined in `firebase_types.py` to keep API outputs Firebase-na
 from __future__ import annotations
 
 from .firebase_types import (
-    FirebaseDiaperData,
-    FirebaseFeedIntervalData,
-    FirebaseSleepIntervalData,
-    HealthDataEntry,
     Number,
     SolidsFoodSource,
     StrictModel,
@@ -23,12 +19,3 @@ class SolidsFoodReference(StrictModel):
     source: SolidsFoodSource
     name: str
     amount: str | Number
-
-
-class CalendarEvents(StrictModel):
-    """Calendar events grouped by tracker type with Firebase-validated payloads."""
-
-    sleep: list[FirebaseSleepIntervalData]
-    feed: list[FirebaseFeedIntervalData]
-    diaper: list[FirebaseDiaperData]
-    health: list[HealthDataEntry]

@@ -139,8 +139,8 @@ class TestSolidsFeeding:
         assert len(solids_entries) > 0
         assert solids_entries[-1].foods is not None
 
-    async def test_solids_in_calendar_feed_events(self, api: HuckleberryAPI, child_uid: str) -> None:
-        """Test that solids entries appear in calendar feed events."""
+    async def test_solids_in_feed_interval_events(self, api: HuckleberryAPI, child_uid: str) -> None:
+        """Test that solids entries appear in feed interval queries."""
         curated = await api.get_solids_curated_list()
         await api.log_solids(
             child_uid,
@@ -151,5 +151,5 @@ class TestSolidsFeeding:
         end_ts = int(time.time()) + 60
         start_ts = end_ts - 300
 
-        cal = await api.get_calendar_events(child_uid, start_ts, end_ts)
-        assert any(entry.mode == "solids" for entry in cal.feed)
+        feed_entries = await api.get_feed_intervals(child_uid, start_ts, end_ts)
+        assert any(entry.mode == "solids" for entry in feed_entries)

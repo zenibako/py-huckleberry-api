@@ -115,20 +115,6 @@ class TestCalendarIntervals:
             elif isinstance(entry, FirebaseMedicationData):
                 assert entry.medication_name is not None or entry.amount is not None
 
-    async def test_get_calendar_events(self, api: HuckleberryAPI, child_uid: str) -> None:
-        """Test fetching all calendar events for a date range."""
-        # Query for events in the last hour
-        now = datetime.now(timezone.utc)
-        start_ts = int(now.timestamp()) - 3600
-        end_ts = int(now.timestamp()) + 60
-
-        events = await api.get_calendar_events(child_uid, start_ts, end_ts)
-
-        assert isinstance(events.sleep, list)
-        assert isinstance(events.feed, list)
-        assert isinstance(events.diaper, list)
-        assert isinstance(events.health, list)
-
     async def test_date_range_filtering(self, api: HuckleberryAPI, child_uid: str) -> None:
         """Test that date range filtering works correctly."""
         # Query for a range far in the past (should return empty or fewer results)

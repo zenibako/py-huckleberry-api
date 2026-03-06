@@ -64,7 +64,7 @@ from .firebase_types import (
     VolumeUnits,
     to_firebase_dict,
 )
-from .models import CalendarEvents, SolidsFoodReference
+from .models import SolidsFoodReference
 
 CURATED_FOODS_BUCKET = "simpleintervals.appspot.com"
 CURATED_FOODS_OBJECT = "foods/fooddb.json"
@@ -1467,30 +1467,6 @@ class HuckleberryAPI:
         except (GoogleAPICallError, ValidationError, RuntimeError, TypeError, ValueError) as err:
             _LOGGER.error("Failed to get growth data: %s", err)
             return None
-
-    async def get_calendar_events(
-        self,
-        child_uid: str,
-        start_timestamp: int,
-        end_timestamp: int,
-    ) -> CalendarEvents:
-        """
-        Fetch all calendar events (sleep, feed, diaper, health) for a date range.
-
-        Args:
-            child_uid: Child unique identifier
-            start_timestamp: Start of range (Unix timestamp in seconds)
-            end_timestamp: End of range (Unix timestamp in seconds)
-
-        Returns:
-            Dictionary with event type keys and lists of event dicts
-        """
-        return CalendarEvents(
-            sleep=await self.get_sleep_intervals(child_uid, start_timestamp, end_timestamp),
-            feed=await self.get_feed_intervals(child_uid, start_timestamp, end_timestamp),
-            diaper=await self.get_diaper_intervals(child_uid, start_timestamp, end_timestamp),
-            health=await self.get_health_entries(child_uid, start_timestamp, end_timestamp),
-        )
 
     async def get_sleep_intervals(
         self,
