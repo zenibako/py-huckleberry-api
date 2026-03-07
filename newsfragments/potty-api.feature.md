@@ -1,1 +1,0 @@
-Added `HuckleberryAPI.log_potty()` for potty events stored in the shared diaper tracker; potty changes are observed through the existing diaper listener.
