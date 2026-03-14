@@ -242,7 +242,7 @@ class TestPumpFeeding:
         # Get all intervals, allowing for start times nudged forward to remain newer
         # than an existing latest pump summary in live Firebase.
         end_time = time.time() + 3600.0
-        intervals = await api.list_pump_intervals(child_uid, created_after, end_time)
+        intervals = await api.list_pump_intervals(child_uid, int(created_after), int(end_time))
         expected_amounts = {50.0, 60.0, 70.0}
         created_intervals = [
             interval
