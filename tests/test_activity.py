@@ -141,7 +141,11 @@ class TestActivity:
         )
         await asyncio.sleep(1)
 
-        intervals = await api.list_activity_intervals(child_uid, int(created_after), int(time.time() + 3600))
+        intervals = await api.list_activity_intervals(
+            child_uid,
+            datetime.fromtimestamp(created_after, tz=timezone.utc),
+            datetime.fromtimestamp(time.time() + 3600, tz=timezone.utc),
+        )
         created_intervals = [
             interval
             for interval in intervals

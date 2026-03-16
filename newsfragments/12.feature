@@ -1,1 +1,0 @@
-Added activity logging, interval listing, and realtime listener support.

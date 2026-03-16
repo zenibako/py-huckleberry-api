@@ -1776,21 +1776,22 @@ class HuckleberryAPI:
     async def list_sleep_intervals(
         self,
         child_uid: str,
-        start_timestamp: int,
-        end_timestamp: int,
+        start_time: datetime,
+        end_time: datetime,
     ) -> list[FirebaseSleepIntervalData]:
         """
         Fetch sleep intervals from Firestore for a date range.
 
         Args:
             child_uid: Child unique identifier
-            start_timestamp: Start of range (Unix timestamp in seconds)
-            end_timestamp: End of range (Unix timestamp in seconds)
+            start_time: Start of range
+            end_time: End of range
 
         Returns:
             List of Firebase-validated sleep interval entries
         """
         events: list[FirebaseSleepIntervalData] = []
+        start_timestamp, end_timestamp = start_time.timestamp(), end_time.timestamp()
         client = await self._get_firestore_client()
         sleep_ref = client.collection("sleep").document(child_uid)
         intervals_ref = sleep_ref.collection("intervals")
@@ -1838,21 +1839,22 @@ class HuckleberryAPI:
     async def list_feed_intervals(
         self,
         child_uid: str,
-        start_timestamp: int,
-        end_timestamp: int,
+        start_time: datetime,
+        end_time: datetime,
     ) -> list[FirebaseFeedIntervalData]:
         """
         Fetch feeding intervals from Firestore for a date range.
 
         Args:
             child_uid: Child unique identifier
-            start_timestamp: Start of range (Unix timestamp in seconds)
-            end_timestamp: End of range (Unix timestamp in seconds)
+            start_time: Start of range
+            end_time: End of range
 
         Returns:
             List of Firebase-validated feed interval entries
         """
         events: list[FirebaseFeedIntervalData] = []
+        start_timestamp, end_timestamp = start_time.timestamp(), end_time.timestamp()
         client = await self._get_firestore_client()
         feed_ref = client.collection("feed").document(child_uid)
         intervals_ref = feed_ref.collection("intervals")
@@ -1908,21 +1910,22 @@ class HuckleberryAPI:
     async def list_diaper_intervals(
         self,
         child_uid: str,
-        start_timestamp: int,
-        end_timestamp: int,
+        start_time: datetime,
+        end_time: datetime,
     ) -> list[FirebaseDiaperData]:
         """
         Fetch diaper intervals from Firestore for a date range.
 
         Args:
             child_uid: Child unique identifier
-            start_timestamp: Start of range (Unix timestamp in seconds)
-            end_timestamp: End of range (Unix timestamp in seconds)
+            start_time: Start of range
+            end_time: End of range
 
         Returns:
             List of Firebase-validated diaper interval entries
         """
         events: list[FirebaseDiaperData] = []
+        start_timestamp, end_timestamp = start_time.timestamp(), end_time.timestamp()
         client = await self._get_firestore_client()
         diaper_ref = client.collection("diaper").document(child_uid)
         intervals_ref = diaper_ref.collection("intervals")
@@ -1970,21 +1973,22 @@ class HuckleberryAPI:
     async def list_health_entries(
         self,
         child_uid: str,
-        start_timestamp: int,
-        end_timestamp: int,
+        start_time: datetime,
+        end_time: datetime,
     ) -> list[HealthDataEntry]:
         """
         Fetch health entries from Firestore for a date range.
 
         Args:
             child_uid: Child unique identifier
-            start_timestamp: Start of range (Unix timestamp in seconds)
-            end_timestamp: End of range (Unix timestamp in seconds)
+            start_time: Start of range
+            end_time: End of range
 
         Returns:
             List of Firebase-validated health entries
         """
         events: list[HealthDataEntry] = []
+        start_timestamp, end_timestamp = start_time.timestamp(), end_time.timestamp()
         client = await self._get_firestore_client()
         health_ref = client.collection("health").document(child_uid)
         # Health uses "data" subcollection, not "intervals"
@@ -2033,21 +2037,22 @@ class HuckleberryAPI:
     async def list_pump_intervals(
         self,
         child_uid: str,
-        start_timestamp: int,
-        end_timestamp: int,
+        start_time: datetime,
+        end_time: datetime,
     ) -> list[FirebasePumpIntervalData]:
         """
         Fetch pump intervals from Firestore for a date range.
 
         Args:
             child_uid: Child unique identifier
-            start_timestamp: Start of range (Unix timestamp in seconds)
-            end_timestamp: End of range (Unix timestamp in seconds)
+            start_time: Start of range
+            end_time: End of range
 
         Returns:
             List of Firebase-validated pump interval entries
         """
         events: list[FirebasePumpIntervalData] = []
+        start_timestamp, end_timestamp = start_time.timestamp(), end_time.timestamp()
         client = await self._get_firestore_client()
         pump_ref = client.collection("pump").document(child_uid)
         intervals_ref = pump_ref.collection("intervals")
@@ -2095,21 +2100,22 @@ class HuckleberryAPI:
     async def list_activity_intervals(
         self,
         child_uid: str,
-        start_timestamp: int,
-        end_timestamp: int,
+        start_time: datetime,
+        end_time: datetime,
     ) -> list[FirebaseActivityIntervalData]:
         """
         Fetch activity intervals from Firestore for a date range.
 
         Args:
             child_uid: Child unique identifier
-            start_timestamp: Start of range (Unix timestamp in seconds)
-            end_timestamp: End of range (Unix timestamp in seconds)
+            start_time: Start of range
+            end_time: End of range
 
         Returns:
             List of Firebase-validated activity interval entries
         """
         events: list[FirebaseActivityIntervalData] = []
+        start_timestamp, end_timestamp = start_time.timestamp(), end_time.timestamp()
         client = await self._get_firestore_client()
         activities_ref = client.collection("activities").document(child_uid)
         intervals_ref = activities_ref.collection("intervals")
