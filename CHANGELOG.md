@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- towncrier release notes start -->
 
+## [0.4.0] - 2026-03-24
+
+### Features
+
+- Added backfilled entry support for sleep, nursing, bottle, solids, diaper, potty, and growth logging, including explicit timestamp APIs for completed historical entries. ([#11](https://github.com/Woyken/py-huckleberry-api/issues/11))
+- Added activity logging, interval listing, and realtime listener support.
+  Changed interval range APIs to accept datetime objects instead of Unix timestamp integers. ([#12](https://github.com/Woyken/py-huckleberry-api/issues/12))
+
+
 ## [0.3.0] - 2026-03-15
 
 ### Features
