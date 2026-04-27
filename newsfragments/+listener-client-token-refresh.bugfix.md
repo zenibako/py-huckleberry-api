@@ -1,1 +1,0 @@
-Reset the sync listener Firestore client (`_listener_client`) inside `refresh_session_token()` so that listeners recreated after a token refresh use new credentials. Without this, recreated listeners reused the old credentials and silently stopped receiving updates after the first token refresh (~1 hour).

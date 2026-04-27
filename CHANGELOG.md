@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- towncrier release notes start -->
 
+## [0.4.1] - 2026-04-27
+
+### Bugfixes
+
+- Reset the sync listener Firestore client (`_listener_client`) inside `refresh_session_token()` so that listeners recreated after a token refresh use new credentials. Without this, recreated listeners reused the old credentials and silently stopped receiving updates after the first token refresh (~1 hour).
+
+
 ## [0.4.0] - 2026-03-24
 
 ### Features
