@@ -260,9 +260,14 @@ class HuckleberryAPI:
                 _LOGGER.error("Error stopping listener %s before refresh: %s", key, err)
         self._listeners.clear()
 
-        # Invalidate the Firestore client so it gets recreated with new token
+        # Invalidate both Firestore clients so they get recreated with new token.
+        # The async client is used for reads/writes; the sync client backs the
+        # snapshot listeners. Without resetting the sync client, recreated
+        # listeners reuse the old credentials and silently stop receiving
+        # updates after the first token refresh (~1 hour).
         self._firestore_client = None
         self._firestore_client_loop = None
+        self._listener_client = None
 
         _LOGGER.debug("Successfully refreshed authentication token")
 
