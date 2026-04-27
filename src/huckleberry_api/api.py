@@ -94,6 +94,7 @@ TDocumentData = TypeVar(
     FirebaseDiaperDocumentData,
     FirebaseActivityDocumentData,
     FirebasePumpDocumentData,
+    FirebaseChildDocument,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -288,6 +289,8 @@ class HuckleberryAPI:
                     await self.setup_activity_listener(child_uid, callback)
                 elif listener_type == "pump":
                     await self.setup_pump_listener(child_uid, callback)
+                elif listener_type == "childs":
+                    await self.setup_child_listener(child_uid, callback)
                 _LOGGER.debug("Recreated %s listener for child %s", listener_type, child_uid)
             except (GoogleAPICallError, RuntimeError, TypeError, ValueError) as err:
                 _LOGGER.error("Error recreating %s listener for child %s: %s", listener_type, child_uid, err)
@@ -1383,7 +1386,7 @@ class HuckleberryAPI:
 
     async def _setup_listener(
         self,
-        collection_name: Literal["sleep", "feed", "health", "diaper", "activities", "pump"],
+        collection_name: Literal["sleep", "feed", "health", "diaper", "activities", "pump", "childs"],
         child_uid: str,
         callback: Callable[[TDocumentData], None],
     ) -> None:
@@ -1426,6 +1429,8 @@ class HuckleberryAPI:
                         validated = FirebaseActivityDocumentData.model_validate(payload)
                     elif collection_name == "pump":
                         validated = FirebasePumpDocumentData.model_validate(payload)
+                    elif collection_name == "childs":
+                        validated = FirebaseChildDocument.model_validate(payload)
                     else:
                         validated = FirebaseDiaperDocumentData.model_validate(payload)
                     callback(cast(TDocumentData, validated))
@@ -1468,6 +1473,10 @@ class HuckleberryAPI:
     async def setup_pump_listener(self, child_uid: str, callback: Callable[[FirebasePumpDocumentData], None]) -> None:
         """Set up real-time listener for pump document changes."""
         await self._setup_listener("pump", child_uid, callback)
+
+    async def setup_child_listener(self, child_uid: str, callback: Callable[[FirebaseChildDocument], None]) -> None:
+        """Set up real-time listener for child document changes."""
+        await self._setup_listener("childs", child_uid, callback)
 
     async def stop_all_listeners(self) -> None:
         """Stop all active real-time listeners."""

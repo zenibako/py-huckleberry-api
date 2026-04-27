@@ -149,12 +149,20 @@ class FirebaseUserDocument(StrictModel):
 # ---------------------------------------------------------------------------
 
 
+class FirebaseChildSweetspotStrings(StrictModel):
+    """Localized/app-generated SweetSpot display strings."""
+
+    text1: str | None = None
+    text2: str | None = None
+    text3: str | None = None
+
+
 class FirebaseChildSweetspot(StrictModel):
     """Known payload for childs/{child_id}.sweetspot."""
 
     selectedNapDay: Number | None = None
     sweetSpotTimes: dict[str, Number] | None = None
-    # sweetspotStrings: FirebaseChildSweetspotStrings | None = None
+    sweetspotStrings: FirebaseChildSweetspotStrings | None = None
     uuid: str | None = None
 
 
