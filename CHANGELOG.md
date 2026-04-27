@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- towncrier release notes start -->
 
+## [0.4.2] - 2026-04-27
+
+### Features
+
+- Add ability to subscribe to `child` collection containing details like Sweetspot ([#41](https://github.com/Woyken/py-huckleberry-api/issues/41))
+
+
 ## [0.4.1] - 2026-04-27
 
 ### Bugfixes
