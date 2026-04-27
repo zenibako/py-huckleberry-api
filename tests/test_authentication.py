@@ -3,10 +3,12 @@
 import asyncio
 import time
 from types import SimpleNamespace
+from typing import cast
 from unittest.mock import Mock
 
 import aiohttp
 import pytest
+from google.cloud import firestore
 
 from huckleberry_api import HuckleberryAPI
 
@@ -148,7 +150,7 @@ class TestAuthentication:
         api.id_token = "stale-id-token"
         api.refresh_token = "stale-refresh-token"
 
-        stale_listener_client = object()
+        stale_listener_client = cast(firestore.Client, object())
         unsubscribe = Mock()
         callback = Mock()
 
@@ -165,7 +167,7 @@ class TestAuthentication:
             assert child_uid == "child-123"
             assert received_callback is callback
             observed_listener_clients.append(api._listener_client)
-            api._listener_client = object()
+            api._listener_client = cast(firestore.Client, object())
 
         monkeypatch = pytest.MonkeyPatch()
         monkeypatch.setattr(websession, "post", fake_post)
